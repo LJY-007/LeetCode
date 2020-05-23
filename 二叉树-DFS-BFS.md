@@ -5,6 +5,7 @@
 |102|[Binary Tree Level Order Traversal \| 二叉树的层序遍历](#102-Binary-Tree-Level-Order-Traversal--二叉树的层序遍历)|Medium|
 |104|[Maximum Depth of Binary Tree \| 二叉树的最大深度](#104-Maximum-Depth-of-Binary-Tree--二叉树的最大深度)|Easy|
 |107|[Binary Tree Level Order Traversal II \| 二叉树的层次遍历 II](#107-Binary-Tree-Level-Order-Traversal-II--二叉树的层次遍历-II)|Easy|
+|110|[Balanced Binary Tree \| 平衡二叉树](#110-Balanced-Binary-Tree--平衡二叉树)|Easy|
 |144|[Binary Tree Preorder Traversal \| 二叉树的前序遍历](#144-Binary-Tree-Preorder-Traversal--二叉树的前序遍历)|Medium|
 |145|[Binary Tree Postorder Traversal \| 二叉树的后序遍历](#145-Binary-Tree-Postorder-Traversal--二叉树的后序遍历)|Hard|
 
@@ -205,6 +206,65 @@ public:
         }
         reverse(res.begin(), res.end());
         return res;
+    }
+};
+```
+
+### 110. Balanced Binary Tree | 平衡二叉树
+🥉给定一个二叉树，判断它是否是高度平衡的二叉树。一棵高度平衡二叉树定义为：一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过1。
+```c++
+给定二叉树: [1,2,2,3,3,null,null,4,4] 返回: false
+
+       1
+      / \
+     2   2
+    / \
+   3   3
+  / \
+ 4   4
+```
+---
+
+标签: `二叉树` `自顶向下` `先序遍历`<br>
+时间复杂度:`O(NlogN)` 空间复杂度:`O(N)`
+```c++
+class Solution {
+public:
+    bool isBalanced(TreeNode* root) {
+        if (!root) return true;
+        //🪁利用二叉树的深度计算,判断二叉树的每个结点的左子树和右子树是否平衡(高度差≤1)
+        int diff = maxDepth(root->left) - maxDepth(root->right);
+        if (diff > 1 || diff < -1) return false;
+        return isBalanced(root->left) && isBalanced(root->right);
+    }
+
+    //🪁DFS递归求二叉树的深度
+    int maxDepth(TreeNode* root) {
+        if (!root) return 0;
+        return max(maxDepth(root->left), maxDepth(root->right)) + 1;
+    }
+};
+```
+
+标签: `二叉树` `自底向上` `后序遍历`<br>
+时间复杂度:`O(N)` 空间复杂度:`O(N)`
+```c++
+class Solution {
+public:
+    bool isBalanced(TreeNode* root) {
+        if (!root) return true;
+        return heightBalance(root) == -1 ? false : true;
+    }
+    
+    int heightBalance(TreeNode* root) {
+        if (!root) return 0;
+        //🪁如果左子树或右子树不平衡则直接返回-1(当前结点为根的树也不平衡)
+        int left = heightBalance(root->left);
+        if (left == -1) return -1;
+        int right = heightBalance(root->right);
+        if (right == -1) return -1;
+        //🪁如果当前结点的左右子树的高度差≤1则返回当前结点的高度,否则返回-1(不平衡)
+        return abs(left - right) < 2 ? max(left, right) + 1 : -1;
     }
 };
 ```
