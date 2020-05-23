@@ -2,6 +2,8 @@
 |序号|题目|难度|
 |:--:|:-|:-:|
 |94|[Binary Tree Inorder Traversal \| 二叉树的中序遍历](#94-Binary-Tree-Inorder-Traversal--二叉树的中序遍历)|Medium|
+|102|[Binary Tree Level Order Traversal \| 二叉树的层序遍历](#102-Binary-Tree-Level-Order-Traversal--二叉树的层序遍历)|Medium|
+|104|[Maximum Depth of Binary Tree \| 二叉树的最大深度](#104-Maximum-Depth-of-Binary-Tree--二叉树的最大深度)|Easy|
 |144|[Binary Tree Preorder Traversal \| 二叉树的前序遍历](#144-Binary-Tree-Preorder-Traversal--二叉树的前序遍历)|Medium|
 |145|[Binary Tree Postorder Traversal \| 二叉树的后序遍历](#145-Binary-Tree-Postorder-Traversal--二叉树的后序遍历)|Hard|
 
@@ -61,6 +63,102 @@ public:
 private:
     vector<int> res;
     stack<TreeNode*> nodes; //利用栈结构实现迭代遍历
+};
+```
+
+### 102. Binary Tree Level Order Traversal | 二叉树的层序遍历
+🥈给你一个二叉树，请你返回其按层序遍历得到的节点值。（即逐层地，从左到右访问所有节点）。
+```
+给定二叉树: [3,9,20,null,null,15,7] 
+    3
+   / \
+  9  20
+    /  \
+   15   7
+返回其层次遍历结果:
+[
+  [3],
+  [9,20],
+  [15,7]
+]
+```
+
+---
+
+标签: `二叉树` `BFS`<br>
+时间复杂度:`O(N)` 空间复杂度:`O(N)`
+```c++
+class Solution {
+public:
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        vector<vector<int>> res;
+        if (!root) return res;
+        //🪁利用队列FIFO的特点对每一层进行迭代输出
+        queue<TreeNode*> nodes;
+        nodes.push(root);
+        while (!nodes.empty()) {
+            int len = nodes.size();
+            vector<int> temp;
+            while (len--) {
+                temp.push_back(nodes.front()->val);
+                if (nodes.front()->left) nodes.push(nodes.front()->left);
+                if (nodes.front()->right) nodes.push(nodes.front()->right);
+                nodes.pop();
+            }
+            res.push_back(temp);
+        }
+        return res;
+    }
+};
+```
+
+### 104. Maximum Depth of Binary Tree | 二叉树的最大深度
+🥉给定一个二叉树，找出其最大深度。二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。
+```
+给定二叉树: [3,9,20,null,null,15,7] 返回: 3 
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+---
+
+标签: `二叉树` `DFS`<br>
+时间复杂度:`O(N)` 空间复杂度:`O(N)`
+```c++
+class Solution {
+public:
+    int maxDepth(TreeNode* root) {
+        if (!root) return 0;
+        //🪁树的深度等于其左子树深度与右子树深度的最大值+1
+        return max(maxDepth(root->left), maxDepth(root->right)) + 1;
+    }
+};
+```
+
+标签: `二叉树` `BFS`<br>
+时间复杂度:`O(N)` 空间复杂度:`O(N)`
+```c++
+class Solution {
+public:
+    int maxDepth(TreeNode* root) {
+        if (!root) return 0;
+        //🪁使用BFS进行层序遍历时记录最终的层数即为最大深度
+        int res = 0;
+        queue<TreeNode*> nodes;
+        nodes.push(root);
+        while (!nodes.empty()) {
+            res++;
+            int len = nodes.size();
+            while (len--) {
+                if (nodes.front()->left) nodes.push(nodes.front()->left);
+                if (nodes.front()->right) nodes.push(nodes.front()->right);
+                nodes.pop();
+            }
+        }
+        return res;
+    }
 };
 ```
 
