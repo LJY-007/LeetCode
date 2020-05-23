@@ -4,6 +4,7 @@
 |94|[Binary Tree Inorder Traversal \| 二叉树的中序遍历](#94-Binary-Tree-Inorder-Traversal--二叉树的中序遍历)|Medium|
 |102|[Binary Tree Level Order Traversal \| 二叉树的层序遍历](#102-Binary-Tree-Level-Order-Traversal--二叉树的层序遍历)|Medium|
 |104|[Maximum Depth of Binary Tree \| 二叉树的最大深度](#104-Maximum-Depth-of-Binary-Tree--二叉树的最大深度)|Easy|
+|107|[Binary Tree Level Order Traversal II \| 二叉树的层次遍历 II](#107-Binary-Tree-Level-Order-Traversal-II--二叉树的层次遍历-II)|Easy|
 |144|[Binary Tree Preorder Traversal \| 二叉树的前序遍历](#144-Binary-Tree-Preorder-Traversal--二叉树的前序遍历)|Medium|
 |145|[Binary Tree Postorder Traversal \| 二叉树的后序遍历](#145-Binary-Tree-Postorder-Traversal--二叉树的后序遍历)|Hard|
 
@@ -82,7 +83,6 @@ private:
   [15,7]
 ]
 ```
-
 ---
 
 标签: `二叉树` `BFS`<br>
@@ -157,6 +157,53 @@ public:
                 nodes.pop();
             }
         }
+        return res;
+    }
+};
+```
+
+### 107. Binary Tree Level Order Traversal II | 二叉树的层次遍历 II
+🥉给定一个二叉树，返回其节点值自底向上的层次遍历。 （即按从叶子节点所在层到根节点所在的层，逐层从左向右遍历）
+```
+给定二叉树: [3,9,20,null,null,15,7] 
+    3
+   / \
+  9  20
+    /  \
+   15   7
+返回其层次遍历结果:
+[
+  
+  [15,7],
+  [9,20],
+  [3]
+]
+```
+---
+
+标签: `二叉树` `BFS`<br>
+时间复杂度:`O(N)` 空间复杂度:`O(N)`
+```c++
+class Solution {
+public:
+    vector<vector<int>> levelOrderBottom(TreeNode* root) {
+        vector<vector<int>> res;
+        if (!root) return res;
+        //🪁使用队列对每一层进行迭代输出,并最终返回反向数组
+        queue<TreeNode*> nodes;
+        nodes.push(root);
+        while (!nodes.empty()) {
+            int len = nodes.size();
+            vector<int> temp;
+            while (len--) {
+                temp.push_back(nodes.front()->val);
+                if (nodes.front()->left) nodes.push(nodes.front()->left);
+                if (nodes.front()->right) nodes.push(nodes.front()->right);
+                nodes.pop();
+            }
+            res.push_back(temp);
+        }
+        reverse(res.begin(), res.end());
         return res;
     }
 };
