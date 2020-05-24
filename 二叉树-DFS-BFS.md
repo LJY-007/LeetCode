@@ -2,6 +2,7 @@
 |序号|题目|难度|
 |:--:|:-|:-:|
 |94|[Binary Tree Inorder Traversal \| 二叉树的中序遍历](#94-Binary-Tree-Inorder-Traversal--二叉树的中序遍历)|Medium|
+|98|[Validate Binary Search Tree \| 验证二叉搜索树](#98-Validate-Binary-Search-Tree--验证二叉搜索树)|Medium|
 |102|[Binary Tree Level Order Traversal \| 二叉树的层序遍历](#102-Binary-Tree-Level-Order-Traversal--二叉树的层序遍历)|Medium|
 |104|[Maximum Depth of Binary Tree \| 二叉树的最大深度](#104-Maximum-Depth-of-Binary-Tree--二叉树的最大深度)|Easy|
 |107|[Binary Tree Level Order Traversal II \| 二叉树的层次遍历 II](#107-Binary-Tree-Level-Order-Traversal-II--二叉树的层次遍历-II)|Easy|
@@ -65,6 +66,99 @@ public:
 private:
     vector<int> res;
     stack<TreeNode*> nodes; //利用栈结构实现迭代遍历
+};
+```
+
+### 98. Validate Binary Search Tree | 验证二叉搜索树
+🥈给定一个二叉树，判断其是否是一个有效的二叉搜索树。假设一个二叉搜索树具有如下特征：
+节点的左子树只包含小于当前节点的数。
+节点的右子树只包含大于当前节点的数。
+所有左子树和右子树自身必须也是二叉搜索树。
+```
+输入:
+    5
+   / \
+  1   4
+     / \
+    3   6
+输出: false
+解释: 输入为: [5,1,4,null,null,3,6]。 根节点的值为 5 ，但是其右子节点值为 4 。
+```
+---
+
+标签: `二叉搜索树` `中序遍历`<br>
+时间复杂度:`O(N)` 空间复杂度:`O(N)`
+```c++
+class Solution {
+public:
+    bool isValidBST(TreeNode* root) {
+        if (!root) return true;
+        //🪁二叉搜索树的中序遍历为有序数组,即确保遍历过程中的当前值大于前一个值
+        if (!isValidBST(root->left)) return false;
+        if (temp.empty()) {
+            temp.push_back(root->val);
+        } else if (temp[0] < root->val) {
+            temp[0] = root->val; 
+        } else {
+            return false;
+        }
+        return isValidBST(root->right);
+    }
+
+private:
+    vector<int> temp; //用于存储遍历过程中结点的值
+};
+```
+
+标签: `二叉搜索树` `栈` `中序遍历`<br>
+时间复杂度:`O(N)` 空间复杂度:`O(N)`
+```c++
+class Solution {
+public:
+    bool isValidBST(TreeNode* root) {
+        if (!root) return true;
+        //🪁利用栈结构迭代实现中序遍历,确保读取的数值不断递增即可
+        while (root || !nodes.empty()) {
+            if (root) {
+                nodes.push(root);
+                root = root->left;
+            } else {
+                if (temp.empty()) {
+                    temp.push_back(nodes.top()->val);
+                } else if (temp[0] < nodes.top()->val) {
+                    temp[0] = nodes.top()->val; 
+                } else {
+                    return false;
+                }
+                root = nodes.top()->right;
+                nodes.pop();
+            }
+        }
+        return true;
+    }
+
+private:
+    stack<TreeNode*> nodes;
+    vector<int> temp;
+};
+```
+
+标签: `二叉搜索树` `先序遍历`<br>
+时间复杂度:`O(N)` 空间复杂度:`O(N)`
+```c++
+class Solution {
+public:
+    bool isValidBST(TreeNode* root) {
+        //🪁对于int型变量,用long类型来初始化上下界
+        return validBound(root, LONG_MIN, LONG_MAX);
+    }
+
+    //🪁先序遍历每个结点,确保每个结点的值在上下界之内
+    bool validBound(TreeNode* root, long lower, long upper) {
+        if (!root) return true;
+        if (root->val <= lower || root->val >= upper) return false;
+        return validBound(root->left, lower, root->val) && validBound(root->right, root->val, upper);
+    }
 };
 ```
 
@@ -160,6 +254,46 @@ public:
         }
         return res;
     }
+};
+```
+
+### 105. Construct Binary Tree from Preorder and Inorder Traversal | 从前序与中序遍历序列构造二叉树
+🥈根据一棵树的前序遍历与中序遍历构造二叉树。你可以假设树中没有重复的元素。
+```
+给出: 前序遍历 preorder = [3,9,20,15,7] 中序遍历 inorder = [9,3,15,20,7]
+返回二叉树:
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+---
+
+标签: `二叉树` `中序遍历` `后序遍历` `哈希表` `递归`<br>
+时间复杂度:`O(N)` 空间复杂度:`O(N)`
+```c++
+class Solution {
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        //🪁用哈希表记录中序遍历的值与下标,便于在递归中快速查找到根的位置
+        for (int i = 0; i != inorder.size(); ++i) indexs[inorder[i]] = i;
+        return recursiveBuild(preorder, 0, 0, inorder.size() - 1);
+    }
+
+    TreeNode* recursiveBuild(const vector<int>& preorder, int pre_root, int in_left, int in_right) {
+        if (in_left > in_right) return NULL;
+        //🪁建立根结点,并确定左右子树在前序遍历与中序遍历中的分割,之后连接根结点与左右子树
+        TreeNode *root = new TreeNode(preorder[pre_root]);
+        int in_root = indexs[preorder[pre_root]];
+        root->left = recursiveBuild(preorder, pre_root + 1, in_left, in_root - 1);
+        root->right = recursiveBuild(preorder, pre_root + in_root - in_left + 1, in_root + 1, in_right);
+        return root;
+    }
+
+private:
+    unordered_map<int, int> indexs;
 };
 ```
 
