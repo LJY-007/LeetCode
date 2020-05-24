@@ -9,6 +9,7 @@
 |110|[Balanced Binary Tree \| 平衡二叉树](#110-Balanced-Binary-Tree--平衡二叉树)|Easy|
 |144|[Binary Tree Preorder Traversal \| 二叉树的前序遍历](#144-Binary-Tree-Preorder-Traversal--二叉树的前序遍历)|Medium|
 |145|[Binary Tree Postorder Traversal \| 二叉树的后序遍历](#145-Binary-Tree-Postorder-Traversal--二叉树的后序遍历)|Hard|
+|297|[Serialize and Deserialize Binary Tree \| 二叉树的序列化与反序列化](#297-Serialize-and-Deserialize-Binary-Tree--二叉树的序列化与反序列化)|Hard|
 |985|[Check Completeness of a Binary Tree \| 二叉树的完全性检验](#985-Check-Completeness-of-a-Binary-Tree--二叉树的完全性检验)|Medium|
 
 ### 94. Binary Tree Inorder Traversal | 二叉树的中序遍历
@@ -516,6 +517,122 @@ private:
 };
 ```
 
+### 297. Serialize and Deserialize Binary Tree | 二叉树的序列化与反序列化
+🏅️序列化是将一个数据结构或者对象转换为连续的比特位的操作，进而可以将转换后的数据存储在一个文件或者内存中，同时也可以通过网络传输到另一个计算机环境，采取相反方式重构得到原数据。
+请设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。
+```
+你可以将以下二叉树:
+
+    1
+   / \
+  2   3
+     / \
+    4   5
+
+序列化为: "[1,2,3,null,null,4,5]"
+```
+---
+
+标签: `二叉树` `BSF` `字符串`<br>
+时间复杂度:`O(N)` 空间复杂度:`O(N)`
+```c++
+class Codec {
+public:
+    string serialize(TreeNode* root) {
+        //🪁BFS层序遍历二叉树,以字符串的形式存储结点的值(空节点的值为"null",以','分割)
+        string res;
+        queue<TreeNode*> nodes;
+        nodes.push(root);
+        while (!nodes.empty()) {
+            if (nodes.front()) {
+                res += to_string(nodes.front()->val) + ',';
+                nodes.push(nodes.front()->left);
+                nodes.push(nodes.front()->right);
+            } else {
+                res += "null,";
+            }
+            nodes.pop();
+        }
+        return res;
+    }
+    
+    TreeNode* deserialize(string data) {
+        //🪁将字符串以特定符号为界分割,并以此建立对应的结点(用指针数组存储)
+        vector<TreeNode*> nodes;
+        string temp = "";
+        for (auto c : data) {
+            if (c == ',') {
+                if (temp == "null") {
+                    nodes.push_back(NULL);
+                } else {
+                    nodes.push_back(new TreeNode(stoi(temp)));
+                }
+                temp = "";
+            } else {
+                temp += c;
+            }
+        }
+        
+        //🪁使用i,j两个下标分别表示当前结点与其左右子结点(当i指向空结点时,j不变)的位置
+        for (int i = 0, j = 1; j != nodes.size(); ++i) {
+            if (nodes[i]) {
+                nodes[i]->left = nodes[j++];
+                nodes[i]->right = nodes[j++];
+            } 
+        }
+        return nodes[0];
+    }
+};
+```
+
+标签: `二叉树` `BSF` `IO流`<br>
+时间复杂度:`O(N)` 空间复杂度:`O(N)`
+```c++
+class Codec {
+public:
+    string serialize(TreeNode* root) {
+        //🪁BFS层序遍历二叉树,以输出流的形式存储结点的值(空节点的值为"null",以' '分割)
+        ostringstream output;
+        queue<TreeNode*> nodes;
+        nodes.push(root);
+        while (!nodes.empty()) {
+            if (nodes.front()) {
+                output << nodes.front()->val << ' '; //巧妙运用输出流避免了类型转换
+                nodes.push(nodes.front()->left);
+                nodes.push(nodes.front()->right);
+            } else {
+                output << "null ";
+            }
+            nodes.pop();
+        }
+        return output.str();
+    }
+
+    TreeNode* deserialize(string data) {
+        //🪁每次从输入流读取字符串(以' '分割),并以此建立对应的结点(用指针数组存储)
+        istringstream input(data);
+        string val;
+        vector<TreeNode*> nodes;
+        while (input >> val) {
+            if (val == "null") {
+                nodes.push_back(NULL);
+            } else {
+                nodes.push_back(new TreeNode(stoi(val)));
+            }
+        }
+        
+        //🪁使用i,j两个下标分别表示当前结点与其左右子结点(当i指向空结点时,j不变)的位置
+        for (int i = 0, j = 1; j != nodes.size(); ++i) {
+            if (nodes[i]) {
+                nodes[i]->left = nodes[j++];
+                nodes[i]->right = nodes[j++];
+            } 
+        }
+        return nodes[0];
+    }
+};
+```
+
 ### 985. Check Completeness of a Binary Tree | 二叉树的完全性检验
 🥈给定一个二叉树，确定它是否是一个完全二叉树。
 ```
@@ -524,7 +641,7 @@ private:
 ```
 ---
 
-标签: `完全二叉树` `BSF`<br>
+标签: `完全二叉树` `BFS`<br>
 时间复杂度:`O(N)` 空间复杂度:`O(N)`
 ```c++
 class Solution {
