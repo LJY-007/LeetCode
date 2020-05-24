@@ -9,7 +9,7 @@
 |110|[Balanced Binary Tree \| 平衡二叉树](#110-Balanced-Binary-Tree--平衡二叉树)|Easy|
 |144|[Binary Tree Preorder Traversal \| 二叉树的前序遍历](#144-Binary-Tree-Preorder-Traversal--二叉树的前序遍历)|Medium|
 |145|[Binary Tree Postorder Traversal \| 二叉树的后序遍历](#145-Binary-Tree-Postorder-Traversal--二叉树的后序遍历)|Hard|
-
+|985|[Check Completeness of a Binary Tree \| 二叉树的完全性检验](#985-Check-Completeness-of-a-Binary-Tree--二叉树的完全性检验)|Medium|
 
 ### 94. Binary Tree Inorder Traversal | 二叉树的中序遍历
 🥈给定一个二叉树，返回它的中序遍历。
@@ -513,5 +513,39 @@ public:
 private:
     vector<int> res;
     stack<TreeNode*> nodes;
+};
+```
+
+### 985. Check Completeness of a Binary Tree | 二叉树的完全性检验
+🥈给定一个二叉树，确定它是否是一个完全二叉树。
+```
+输入：[1,2,3,4,5,null,7] 输出：false
+解释：值为 7 的结点没有尽可能靠向左侧。
+```
+---
+
+标签: `完全二叉树` `BSF`<br>
+时间复杂度:`O(N)` 空间复杂度:`O(N)`
+```c++
+class Solution {
+public:
+    bool isCompleteTree(TreeNode* root) {
+        if (!root) return true;
+        //🪁BFS层序遍历二叉树,当遇到空结点时其后续所有结点必须为空
+        queue<TreeNode*> nodes;
+        nodes.push(root);
+        bool has_null = false;
+        while (!nodes.empty()) {
+            if (has_null && nodes.front()) return false; 
+            if (nodes.front()) {
+                nodes.push(nodes.front()->left);
+                nodes.push(nodes.front()->right);
+            } else {
+                has_null = true;
+            }
+            nodes.pop();
+        }
+        return true;
+    }
 };
 ```
