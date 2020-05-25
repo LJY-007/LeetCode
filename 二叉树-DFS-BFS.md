@@ -545,7 +545,7 @@ public:
 
 标签: `完全二叉树` `满二叉树` `递归`<br>
 时间复杂度:`O((logN)^2)` 空间复杂度:`O(logN)`
-```
+```c++
 class Solution {
 public:
     int countNodes(TreeNode* root) {
