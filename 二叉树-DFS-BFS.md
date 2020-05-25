@@ -9,6 +9,7 @@
 |110|[Balanced Binary Tree \| 平衡二叉树](#110-Balanced-Binary-Tree--平衡二叉树)|Easy|
 |144|[Binary Tree Preorder Traversal \| 二叉树的前序遍历](#144-Binary-Tree-Preorder-Traversal--二叉树的前序遍历)|Medium|
 |145|[Binary Tree Postorder Traversal \| 二叉树的后序遍历](#145-Binary-Tree-Postorder-Traversal--二叉树的后序遍历)|Hard|
+|222|[Count Complete Tree Nodes \| 完全二叉树的节点个数](#222-Count-Complete-Tree-Nodes--完全二叉树的节点个数)|Medium|
 |297|[Serialize and Deserialize Binary Tree \| 二叉树的序列化与反序列化](#297-Serialize-and-Deserialize-Binary-Tree--二叉树的序列化与反序列化)|Hard|
 |985|[Check Completeness of a Binary Tree \| 二叉树的完全性检验](#985-Check-Completeness-of-a-Binary-Tree--二叉树的完全性检验)|Medium|
 
@@ -517,6 +518,60 @@ private:
 };
 ```
 
+### 222. Count Complete Tree Nodes | 完全二叉树的节点个数
+🥈给出一个完全二叉树，求出该树的节点个数。
+完全二叉树的定义如下：在完全二叉树中，除了最底层节点可能没填满外，其余每层节点数都达到最大值，并且最下面一层的节点都集中在该层最左边的若干位置。若最底层为第 h 层，则该层包含 1~ 2h 个节点。
+```
+输入:      输出: 6
+    1
+   / \
+  2   3
+ / \  /
+4  5 6
+```
+---
+
+标签: `完全二叉树` `DSF`<br>
+时间复杂度:`O(N)` 空间复杂度:`O(logN)`
+```c++
+class Solution {
+public:
+    int countNodes(TreeNode* root) {
+        if (!root) return 0;
+        return countNodes(root->left) + countNodes(root->right) + 1; 
+    }
+};
+```
+
+标签: `完全二叉树` `满二叉树` `递归`<br>
+时间复杂度:`O((logN)^2)` 空间复杂度:`O(logN)`
+```
+class Solution {
+public:
+    int countNodes(TreeNode* root) {
+        if (!root) return 0;
+        //🪁当完全二叉树的左右子树高度相同时,其左子树一定是满二叉树,相反则右子树一定是满二叉树(高度差1)
+        int d_left = treeHeight(root->left);
+        int d_right = treeHeight(root->right);
+        if (d_left == d_right) {
+            //🪁层数为d的满二叉树共有2^d-1个结点(灵活使用位运算符)
+            return (1 << d_left) + countNodes(root->right);
+        } else {
+            return countNodes(root->left) + (1 << d_right);
+        }
+    }
+
+    //🪁从头结点开始不断往下寻找左子结点,总数即为完全二叉树的高度
+    int treeHeight(TreeNode* root) {
+        int height = 0;
+        while (root) {
+            height++;
+            root = root->left;
+        }
+        return height;
+    }
+};
+```
 ### 297. Serialize and Deserialize Binary Tree | 二叉树的序列化与反序列化
 🏅️序列化是将一个数据结构或者对象转换为连续的比特位的操作，进而可以将转换后的数据存储在一个文件或者内存中，同时也可以通过网络传输到另一个计算机环境，采取相反方式重构得到原数据。
 请设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。
