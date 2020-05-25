@@ -1,11 +1,13 @@
 ## Table of Contents
 |序号|题目|难度|
 |:--:|:-|:-:|
+|78|||
 |136|[Single Number \| 只出现一次的数字](#136-Single-Number--只出现一次的数字)|Easy|
 |137|[Single Number II \| 只出现一次的数字 II](#137-Single-Number-II--只出现一次的数字-II)|Medium|
 |190|[Reverse Bits \| 颠倒二进制位](#190-Reverse-Bits--颠倒二进制位)|Easy|
 |191|[Search in Rotated Sorted Array \| 位1的个数](#191-Search-in-Rotated-Sorted-Array--位1的个数)|Easy|
 |231|[Power of Two \| 2的幂](#231-Power-of-Two--2的幂)|Easy|
+|260|||
 |338|[Counting Bits \| 比特位计数](#338-Counting-Bits--比特位计数)|Medium|
 |389|[Find the Difference \| 找不同](#389-Find-the-Difference--找不同)|Easy|
 
